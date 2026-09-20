@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celular Virtual</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#111;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.phone{
+    width:360px;
+    height:720px;
+    padding:7px;
+    border:7px solid #222;
+    border-radius:42px;
+    background:#050505;
+    box-shadow:0 20px 60px #000;
+}
+
+.screen{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    border-radius:32px;
+    background:linear-gradient(135deg,#18234b,#263f82);
+}
+
+.camera{
+    position:absolute;
+    z-index:1000;
+    top:8px;
+    left:50%;
+    transform:translateX(-50%);
+    width:95px;
+    height:25px;
+    border-radius:20px;
+    background:#000;
+}
+
+.status{
+    height:45px;
+    padding:0 16px;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+button{
+    cursor:pointer;
+}
+
+.home{
+    padding:18px;
+}
+
+.clock{
+    color:white;
+    text-align:center;
+    font-size:48px;
+    font-weight:bold;
+}
+
+.date{
+    color:#ddd;
+    text-align:center;
+    margin:5px 0 35px;
+}
+
+.apps{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px 10px;
+}
+
+.app{
+    color:white;
+    text-align:center;
+    cursor:pointer;
+}
+
+.icon{
+    width:58px;
+    height:58px;
+    margin:auto;
+    border-radius:16px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:30px;
+    box-shadow:0 5px 12px #0005;
+}
+
+.app-name{
+    margin-top:5px;
+    font-size:11px;
+}
+
+.bank-icon{
+    background:#820ad1;
+}
+
+.bank-icon::after{
+    content:"N";
+    color:white;
+    font-size:32px;
+    font-weight:bold;
+}
+
+.tiktok-icon{
+    background:#111;
+}
+
+.tiktok-icon::after{
+    content:"♪";
+    color:white;
+    font-size:36px;
+}
+
+.secret-icon{
+    background:linear-gradient(135deg,#111,#444);
+}
+
+.dock{
+    position:absolute;
+    left:18px;
+    right:18px;
+    bottom:14px;
+    height:78px;
+    border-radius:25px;
+    background:#ffffff30;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:35px;
+}
+
+.window{
+    position:absolute;
+    inset:0;
+    z-index:100;
+    display:none;
+    overflow-y:auto;
+}
+
+.window.active{
+    display:block;
+}
+
+/* BANCO */
+
+.bank{
+    background:#f5f5f5;
+    color:#111;
+}
+
+.bank-header{
+    padding:60px 22px 25px;
+    color:white;
+    background:linear-gradient(135deg,#820ad1,#5b0794);
+    border-radius:0 0 25px 25px;
+}
+
+.bank-top{
+    display:flex;
+    justify-content:space-between;
+}
+
+.bank-actions{
+    display:flex;
+    gap:8px;
+}
+
+.bank-btn{
+    width:40px;
+    height:40px;
+    border:0;
+    border-radius:50%;
+    background:#ffffff25;
+    color:white;
+}
+
+.bank-user{
+    margin-top:25px;
+}
+
+.balance{
+    margin-top:8px;
+    font-size:30px;
+    font-weight:bold;
+}
+
+.bank-content{
+    padding:20px;
+}
+
+.bank-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-bottom:20px;
+}
+
+.bank-action{
+    text-align:center;
+}
+
+.bank-action-icon{
+    width:52px;
+    height:52px;
+    margin:auto;
+    border-radius:50%;
+    background:#e5e5e5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+}
+
+.bank-action p{
+    margin-top:6px;
+    font-size:11px;
+}
+
+.card{
+    height:170px;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#111,#444);
+    color:white;
+}
+
+.card-number{
+    margin-top:45px;
+    letter-spacing:3px;
+}
+
+.transaction{
+    display:flex;
+    align-items:center;
+    padding:12px;
+    margin-bottom:8px;
+    border-radius:12px;
+    background:white;
+}
+
+.transaction-info{
+    flex:1;
+    margin-left:10px;
+}
+
+.transaction-name{
+    font-weight:bold;
+    font-size:13px;
+}
+
+.transaction-desc{
+    color:#777;
+    font-size:10px;
+    margin-top:4px;
+}
+
+.green{
+    color:#159447;
+    font-weight:bold;
+}
+
+.red{
+    color:#d62828;
+    font-weight:bold;
+}
+
+/* TIKTOK */
+
+.tiktok{
+    background:#000;
+    color:white;
+}
+
+.top{
+    height:70px;
+    padding:35px 15px 5px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.top button{
+    border:0;
+    background:none;
+    color:white;
+    font-size:22px;
+}
+
+.video{
+    height:410px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#26104c,#090909);
+    position:relative;
+}
+
+.video-center{
+    text-align:center;
+}
+
+.video-center div{
+    font-size:70px;
+}
+
+.video-info{
+    position:absolute;
+    bottom:15px;
+    left:15px;
+}
+
+.shop{
+    padding:15px;
+}
+
+.shop-title{
+    font-size:21px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.products{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.product{
+    background:#1d1d1d;
+    padding:10px;
+    border-radius:14px;
+}
+
+.product-image{
+    height:90px;
+    background:#292929;
+    border-radius:10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:45px;
+}
+
+.product-name{
+    margin-top:8px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.product-price{
+    margin-top:5px;
+    font-weight:bold;
+}
+
+.buy{
+    width:100%;
+    margin-top:7px;
+    padding:9px;
+    border:0;
+    border-radius:9px;
+    background:#ff0050;
+    color:white;
+}
+
+/* SECRETO */
+
+.secret{
+    background:#080808;
+    color:white;
+}
+
+.secret-header{
+    padding:55px 20px 20px;
+    background:linear-gradient(135deg,#111,#333);
+}
+
+.secret-header h1{
+    font-size:25px;
+}
+
+.secret-content{
+    padding:20px;
+}
+
+.secret-box{
+    padding:18px;
+    border-radius:18px;
+    background:#171717;
+    margin-bottom:15px;
+}
+
+.secret-input{
+    width:100%;
+    padding:13px;
+    margin-top:8px;
+    border:1px solid #444;
+    border-radius:10px;
+    background:#222;
+    color:white;
+    outline:none;
+}
+
+.secret-button{
+    width:100%;
+    padding:13px;
+    margin-top:10px;
+    border:0;
+    border-radius:10px;
+    background:#820ad1;
+    color:white;
+    font-weight:bold;
+}
+
+/* LOGIN SECRETO */
+
+.secret-login{
+    position:absolute;
+    inset:0;
+    z-index:500;
+    display:none;
+    background:#080808;
+    color:white;
+    padding:100px 25px;
+}
+
+.secret-login.active{
+    display:block;
+}
+
+.secret-login h1{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.secret-code{
+    width:100%;
+    padding:16px;
+    background:#222;
+    color:white;
+    border:1px solid #444;
+    border-radius:12px;
+    outline:none;
+}
+
+.secret-enter{
+    width:100%;
+    margin-top:12px;
+    padding:15px;
+    border:0;
+    border-radius:12px;
+    background:#820ad1;
+    color:white;
+    font-weight:bold;
+}
+
+/* NOTIFICAÇÕES */
+
+.notification-button{
+    position:relative;
+    border:0;
+    background:none;
+    color:white;
+    font-size:19px;
+}
+
+#notificationCount{
+    position:absolute;
+    top:-6px;
+    right:-7px;
+    display:none;
+    min-width:16px;
+    height:16px;
+    border-radius:50%;
+    background:red;
+    color:white;
+    font-size:10px;
+    justify-content:center;
+    align-items:center;
+}
+
+.notification-panel{
+    position:absolute;
+    z-index:900;
+    top:43px;
+    left:8px;
+    right:8px;
+    max-height:420px;
+    overflow:auto;
+    background:#181818;
+    color:white;
+    border-radius:0 0 20px 20px;
+    transform:translateY(-450px);
+    transition:.3s;
+}
+
+.notification-panel.open{
+    transform:translateY(0);
+}
+
+.notification-head{
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid #333;
+}
+
+.notification-head button{
+    border:0;
+    background:#333;
+    color:white;
+    padding:6px 10px;
+    border-radius:8px;
+}
+
+.notification{
+    display:flex;
+    gap:10px;
+    padding:14px;
+    border-bottom:1px solid #333;
+}
+
+.notification-icon{
+    font-size:25px;
+}
+
+.notification-text{
+    font-size:12px;
+}
+
+.notification-text b{
+    display:block;
+    font-size:13px;
+    margin-bottom:4px;
+}
+
+/* TOAST */
+
+.toast{
+    position:absolute;
+    z-index:2000;
+    left:20px;
+    right:20px;
+    bottom:25px;
+    padding:14px;
+    border-radius:14px;
+    background:#222;
+    color:white;
+    text-align:center;
+    display:none;
+}
+
+.toast.show{
+    display:block;
+}
+
+.homebar{
+    position:absolute;
+    z-index:2500;
+    bottom:6px;
+    left:50%;
+    transform:translateX(-50%);
+    width:105px;
+    height:5px;
+    border-radius:10px;
+    background:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+<div class="screen">
+
+<div class="camera"></div>
+
+<div class="status">
+
+<span id="time">12:00</span>
+
+<div>
+
+<button
+class="notification-button"
+onclick="toggleNotifications()">
+
+🔔
+
+<span id="notificationCount">0</span>
+
+</button>
+
+📶 🔋
+
+</div>
+
+</div>
+
+
+<!-- NOTIFICAÇÕES -->
+
+<div
+class="notification-panel"
+id="notificationPanel">
+
+<div class="notification-head">
+
+<b>Notificações</b>
+
+<button onclick="clearNotifications()">
+Limpar
+</button>
+
+</div>
+
+<div id="notifications"></div>
+
+</div>
+
+
+<!-- TELA INICIAL -->
+
+<div class="home">
+
+<div class="clock" id="clock">
+12:00
+</div>
+
+<div class="date" id="date">
+Hoje
+</div>
+
+
+<div class="apps">
+
+<div class="app" onclick="openBank()">
+<div class="icon bank-icon"></div>
+<div class="app-name">Banco</div>
+</div>
+
+
+<div class="app" onclick="openTikTok()">
+<div class="icon tiktok-icon"></div>
+<div class="app-name">TikTok</div>
+</div>
+
+
+<div class="app" onclick="openSecret()">
+<div class="icon secret-icon">🔐</div>
+<div class="app-name">Secreto</div>
+</div>
+
+</div>
+
+
+<div class="dock">
+
+<div class="app" onclick="openBank()">
+<div class="icon bank-icon"></div>
+</div>
+
+<div class="app" onclick="openTikTok()">
+<div class="icon tiktok-icon"></div>
+</div>
+
+<div class="app" onclick="openSecret()">
+<div class="icon secret-icon">🔐</div>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- BANCO -->
+
+<div class="window bank" id="bankApp">
+
+<div class="bank-header">
+
+<div class="bank-top">
+
+<div>👤</div>
+
+<div class="bank-actions">
+
+<button class="bank-btn" onclick="closeApps()">
+✕
+</button>
+
+<button class="bank-btn" onclick="toggleBalance()">
+👁
+</button>
+
+</div>
+
+</div>
+
+<div class="bank-user">
+Olá, <b id="bankUser">Usuário</b> 👋
+</div>
+
+<div class="balance" id="balance">
+R$ 1.000,00
+</div>
+
+</div>
+
+
+<div class="bank-content">
+
+<div class="bank-grid">
+
+<div class="bank-action"
+onclick="openTransfer()">
+
+<div class="bank-action-icon">
+💸
+</div>
+
+<p>Transferir</p>
+
+</div>
+
+<div class="bank-action"
+onclick="showToast('Pix aberto')">
+
+<div class="bank-action-icon">
+⚡
+</div>
+
+<p>Pix</p>
+
+</div>
+
+<div class="bank-action"
+onclick="showToast('Pagamento aberto')">
+
+<div class="bank-action-icon">
+💳
+</div>
+
+<p>Pagar</p>
+
+</div>
+
+<div class="bank-action"
+onclick="showToast('Depósito aberto')">
+
+<div class="bank-action-icon">
+💰
+</div>
+
+<p>Depositar</p>
+
+</div>
+
+</div>
+
+
+<div
+id="transferBox"
+style="display:none;background:white;padding:15px;border-radius:15px;margin-bottom:20px">
+
+<h3>Enviar dinheiro</h3>
+
+<input
+id="recipient"
+class="secret-input"
+style="color:#111;background:white;border-color:#ddd"
+placeholder="Nome da conta">
+
+<input
+id="amount"
+class="secret-input"
+style="color:#111;background:white;border-color:#ddd"
+type="number"
+placeholder="Valor">
+
+<button
+class="secret-button"
+onclick="transferMoney()">
+
+Enviar dinheiro
+
+</button>
+
+<button
+class="secret-button"
+style="background:#ddd;color:#111"
+onclick="closeTransfer()">
+
+Cancelar
+
+</button>
+
+</div>
+
+
+<h3>Meu cartão</h3>
+
+<div class="card">
+
+Cartão virtual
+
+<div class="card-number">
+•••• •••• •••• 4821
+</div>
+
+</div>
+
+
+<h3>Movimentações</h3>
+
+<div id="transactions"></div>
+
+</div>
+
+</div>
+
+
+<!-- TIKTOK -->
+
+<div class="window tiktok" id="tiktokApp">
+
+<div class="top">
+
+<button onclick="closeApps()">
+←
+</button>
+
+<b>TikTok</b>
+
+<button onclick="openShop()">
+🛍️
+</button>
+
+</div>
+
+<div class="video">
+
+<div class="video-center">
+
+<div>🎬</div>
+
+<h2>Seu feed</h2>
+
+<p>Vídeos recomendados</p>
+
+</div>
+
+<div class="video-info">
+<b>@criador</b>
+<br>
+Confira esse vídeo! 🔥
+</div>
+
+</div>
+
+
+<div class="shop">
+
+<div class="shop-title">
+🛍️ TikTok Shop
+</div>
+
+<div class="products">
+
+<div class="product">
+
+<div class="product-image">
+⌨️
+</div>
+
+<div class="product-name">
+Teclado Gamer
+</div>
+
+<div class="product-price">
+R$ 129,90
+</div>
+
+<button
+class="buy"
+onclick="buy(129.90,'Teclado Gamer')">
+
+Comprar
+
+</button>
+
+</div>
+
+
+<div class="product">
+
+<div class="product-image">
+🖱️
+</div>
+
+<div class="product-name">
+Mouse Gamer
+</div>
+
+<div class="product-price">
+R$ 89,90
+</div>
+
+<button
+class="buy"
+onclick="buy(89.90,'Mouse Gamer')">
+
+Comprar
+
+</button>
+
+</div>
+
+
+<div class="product">
+
+<div class="product-image">
+🎧
+</div>
+
+<div class="product-name">
+Headset
+</div>
+
+<div class="product-price">
+R$ 159,90
+</div>
+
+<button
+class="buy"
+onclick="buy(159.90,'Headset')">
+
+Comprar
+
+</button>
+
+</div>
+
+
+<div class="product">
+
+<div class="product-image">
+🎮
+</div>
+
+<div class="product-name">
+Controle
+</div>
+
+<div class="product-price">
+R$ 149,90
+</div>
+
+<button
+class="buy"
+onclick="buy(149.90,'Controle')">
+
+Comprar
+
+</button>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+<!-- SECRETO LOGIN -->
+
+<div
+class="secret-login"
+id="secretLogin">
+
+<h1>🔐 App Secreto</h1>
+
+<p style="text-align:center;margin-bottom:15px">
+Digite o código de administrador
+</p>
+
+<input
+id="secretCode"
+class="secret-code"
+type="password"
+placeholder="Código">
+
+<button
+class="secret-enter"
+onclick="checkSecret()">
+
+Entrar
+
+</button>
+
+<button
+class="secret-enter"
+style="background:#333"
+onclick="closeSecret()">
+
+Voltar
+
+</button>
+
+</div>
+
+
+<!-- SECRETO -->
+
+<div
+class="window secret"
+id="secretApp">
+
+<div class="secret-header">
+
+<button
+onclick="closeApps()"
+style="background:none;border:0;color:white;font-size:22px">
+
+←
+
+</button>
+
+<h1>🔐 Secreto</h1>
+
+<p>Painel de administrador</p>
+
+</div>
+
+
+<div class="secret-content">
+
+
+<div class="secret-box">
+
+<h3>
+💰 Enviar dinheiro
+</h3>
+
+<p style="margin-top:7px;color:#aaa">
+Escolha uma conta e uma quantia.
+</p>
+
+<input
+id="secretRecipient"
+class="secret-input"
+placeholder="Nome ou ID da conta">
+
+<input
+id="secretAmount"
+class="secret-input"
+type="number"
+placeholder="Quantidade">
+
+<button
+class="secret-button"
+onclick="secretSendMoney()">
+
+Enviar dinheiro
+
+</button>
+
+</div>
+
+
+<div class="secret-box">
+
+<h3>
+ℹ️ Como funciona
+</h3>
+
+<p style="margin-top:10px;color:#aaa;font-size:13px">
+
+Digite o nome da conta existente.
+Depois coloque a quantia e toque em
+"Enviar dinheiro".
+
+</p>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+<div class="homebar"></div>
+
+</div>
+</div>
+
+
+<script>
+
+/* =========================
+   DADOS
+========================= */
+
+let accounts =
+JSON.parse(localStorage.getItem("accounts") || "{}");
+
+if(!accounts["Maria"]){
+
+    accounts["Maria"] = {
+        balance:1000,
+        transactions:[]
+    };
+
+    saveAccounts();
+}
+
+let currentUser =
+localStorage.getItem("currentUser") || "Maria";
+
+
+function saveAccounts(){
+
+    localStorage.setItem(
+        "accounts",
+        JSON.stringify(accounts)
+    );
+
+}
+
+
+/* =========================
+   RELÓGIO
+========================= */
+
+function updateClock(){
+
+    const now = new Date();
+
+    const h =
+        String(now.getHours()).padStart(2,"0");
+
+    const m =
+        String(now.getMinutes()).padStart(2,"0");
+
+    document.getElementById("clock")
+        .textContent = h + ":" + m;
+
+    document.getElementById("time")
+        .textContent = h + ":" + m;
+
+    document.getElementById("date")
+        .textContent =
+        now.toLocaleDateString(
+            "pt-BR",
+            {
+                weekday:"long",
+                day:"numeric",
+                month:"long"
+            }
+        );
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+
+/* =========================
+   TELAS
+========================= */
+
+function closeApps(){
+
+    document
+    .querySelectorAll(".window")
+    .forEach(function(el){
+
+        el.classList.remove("active");
+
+    });
+
+    document
+    .getElementById("secretLogin")
+    .classList.remove("active");
+
+}
+
+
+function openBank(){
+
+    closeApps();
+
+    document
+    .getElementById("bankApp")
+    .classList.add("active");
+
+    updateBank();
+
+}
+
+
+function openTikTok(){
+
+    closeApps();
+
+    document
+    .getElementById("tiktokApp")
+    .classList.add("active");
+
+}
+
+
+function closeTransfer(){
+
+    document
+    .getElementById("transferBox")
+    .style.display = "none";
+
+}
+
+
+function openTransfer(){
+
+    document
+    .getElementById("transferBox")
+    .style.display = "block";
+
+}
+
+
+/* =========================
+   BANCO
+========================= */
+
+let balanceVisible = true;
+
+
+function updateBank(){
+
+    const account =
+        accounts[currentUser];
+
+    if(!account) return;
+
+    document
+    .getElementById("bankUser")
+    .textContent =
+    currentUser;
+
+    document
+    .getElementById("balance")
+    .textContent =
+    balanceVisible
+    ? money(account.balance)
+    : "R$ •••••";
+
+    renderTransactions();
+
+}
+
+
+function toggleBalance(){
+
+    balanceVisible =
+        !balanceVisible;
+
+    updateBank();
+
+}
+
+
+function money(value){
+
+    return Number(value).toLocaleString(
+        "pt-BR",
+        {
+            style:"currency",
+            currency:"BRL"
+        }
+    );
+
+}
+
+
+/* =========================
+   TRANSFERÊNCIA NORMAL
+========================= */
+
+function transferMoney(){
+
+    const recipient =
+        document
+        .getElementById("recipient")
+        .value.trim();
+
+    const amount =
+        Number(
+            document
+            .getElementById("amount")
+            .value
+        );
+
+
+    if(!recipient){
+
+        showToast("Digite a conta.");
+
+        return;
+
+    }
+
+
+    if(!accounts[recipient]){
+
+        showToast("Conta não encontrada.");
+
+        return;
+
+    }
+
+
+    if(!amount || amount <= 0){
+
+        showToast("Digite um valor válido.");
+
+        return;
+
+    }
+
+
+    if(recipient === currentUser){
+
+        showToast("Você não pode enviar para você.");
+
+        return;
+
+    }
+
+
+    if(accounts[currentUser].balance < amount){
+
+        showToast("Saldo insuficiente.");
+
+        return;
+
+    }
+
+
+    accounts[currentUser].balance -= amount;
+
+    accounts[recipient].balance += amount;
+
+
+    accounts[currentUser].transactions.unshift({
+
+        title:"Transferência enviada",
+
+        desc:"Para " + recipient,
+
+        amount:amount,
+
+        type:"out"
+
+    });
+
+
+    accounts[recipient].transactions.unshift({
+
+        title:"Dinheiro recebido",
+
+        desc:"De " + currentUser,
+
+        amount:amount,
+
+        type:"in"
+
+    });
+
+
+    saveAccounts();
+
+
+    notify(
+        currentUser,
+        "Transferência enviada",
+        "Você enviou " +
+        money(amount) +
+        " para " +
+        recipient,
+        "💸"
+    );
+
+
+    notify(
+        recipient,
+        "Dinheiro recebido",
+        currentUser +
+        " enviou " +
+        money(amount) +
+        " para você.",
+        "💰"
+    );
+
+
+    document
+    .getElementById("recipient")
+    .value = "";
+
+    document
+    .getElementById("amount")
+    .value = "";
+
+
+    closeTransfer();
+
+    updateBank();
+
+    showToast("Dinheiro enviado! 💸");
+
+}
+
+
+/* =========================
+   TIKTOK SHOP
+========================= */
+
+function buy(price,name){
+
+    if(accounts[currentUser].balance < price){
+
+        showToast("Saldo insuficiente.");
+
+        return;
+
+    }
+
+
+    accounts[currentUser].balance -= price;
+
+
+    accounts[currentUser].transactions.unshift({
+
+        title:"Compra TikTok Shop",
+
+        desc:name,
+
+        amount:price,
+
+        type:"out"
+
+    });
+
+
+    saveAccounts();
+
+    updateBank();
+
+
+    notify(
+        currentUser,
+        "Compra realizada",
+        name + " - " + money(price),
+        "🛍️"
+    );
+
+
+    showToast(
+        "Compra realizada! 🛍️"
+    );
+
+}
+
+
+function openShop(){
+
+    document
+    .getElementById("tiktokApp")
+    .scrollTo({
+        top:450,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================
+   APP SECRETO
+========================= */
+
+function openSecret(){
+
+    document
+    .getElementById("secretLogin")
+    .classList.add("active");
+
+    document
+    .getElementById("secretCode")
+    .value = "";
+
+}
+
+
+function closeSecret(){
+
+    document
+    .getElementById("secretLogin")
+    .classList.remove("active");
+
+}
+
+
+function checkSecret(){
+
+    const code =
+        document
+        .getElementById("secretCode")
+        .value;
+
+
+    if(code === "123sóadm"){
+
+        closeSecret();
+
+        closeApps();
+
+        document
+        .getElementById("secretApp")
+        .classList.add("active");
+
+        showToast(
+            "Acesso autorizado 🔓"
+        );
+
+    }else{
+
+        showToast(
+            "Código incorreto!"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   ENVIO PELO SECRETO
+========================= */
+
+function secretSendMoney(){
+
+    const recipient =
+        document
+        .getElementById("secretRecipient")
+        .value.trim();
+
+    const amount =
+        Number(
+            document
+            .getElementById("secretAmount")
+            .value
+        );
+
+
+    if(!recipient){
+
+        showToast(
+            "Digite o nome ou ID da conta."
+        );
+
+        return;
+
+    }
+
+
+    if(!accounts[recipient]){
+
+        showToast(
+            "Essa conta não existe."
+        );
+
+        return;
+
+    }
+
+
+    if(!amount || amount <= 0){
+
+        showToast(
+            "Digite uma quantia válida."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       O app secreto cria dinheiro virtual.
+       Não desconta do administrador.
+    */
+
+    accounts[recipient].balance += amount;
+
+
+    accounts[recipient].transactions.unshift({
+
+        title:"Dinheiro recebido",
+
+        desc:"Crédito administrativo",
+
+        amount:amount,
+
+        type:"in"
+
+    });
+
+
+    saveAccounts();
+
+
+    notify(
+
+        recipient,
+
+        "Você recebeu dinheiro",
+
+        "Você recebeu " +
+        money(amount) +
+        " do administrador.",
+
+        "💰"
+
+    );
+
+
+    document
+    .getElementById("secretRecipient")
+    .value = "";
+
+    document
+    .getElementById("secretAmount")
+    .value = "";
+
+
+    showToast(
+        money(amount) +
+        " enviado para " +
+        recipient +
+        " 💰"
+    );
+
+}
+
+
+/* =========================
+   HISTÓRICO
+========================= */
+
+function renderTransactions(){
+
+    const box =
+        document
+        .getElementById("transactions");
+
+    const list =
+        accounts[currentUser].transactions;
+
+
+    box.innerHTML = "";
+
+
+    if(!list.length){
+
+        box.innerHTML =
+        `
+        <div class="transaction">
+            <div>📄</div>
+            <div class="transaction-info">
+                Nenhuma movimentação
+            </div>
+        </div>
+        `;
+
+        return;
+
+    }
+
+
+    list.slice(0,10).forEach(function(item){
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "transaction";
+
+
+        const incoming =
+            item.type === "in";
+
+
+        div.innerHTML =
+        `
+        <div>
+            ${incoming ? "💰" : "💸"}
+        </div>
+
+        <div class="transaction-info">
+
+            <div class="transaction-name">
+                ${item.title}
+            </div>
+
+            <div class="transaction-desc">
+                ${item.desc}
+            </div>
+
+        </div>
+
+        <div class="${incoming ? "green" : "red"}">
+
+            ${incoming ? "+" : "-"}
+            ${money(item.amount)}
+
+        </div>
+        `;
+
+
+        box.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================
+   NOTIFICAÇÕES
+========================= */
+
+function notificationKey(user){
+
+    return "notifications_" + user;
+
+}
+
+
+function getNotifications(){
+
+    return JSON.parse(
+        localStorage.getItem(
+            notificationKey(currentUser)
+        ) || "[]"
+    );
+
+}
+
+
+function notify(
+    user,
+    title,
+    message,
+    icon
+){
+
+    const key =
+        notificationKey(user);
+
+
+    let list =
+        JSON.parse(
+            localStorage.getItem(key) || "[]"
+        );
+
+
+    list.unshift({
+
+        title:title,
+
+        message:message,
+
+        icon:icon
+
+    });
+
+
+    localStorage.setItem(
+        key,
+        JSON.stringify(list)
+    );
+
+
+    if(user === currentUser){
+
+        renderNotifications();
+
+    }
+
+}
+
+
+function renderNotifications(){
+
+    const list =
+        getNotifications();
+
+
+    const box =
+        document
+        .getElementById("notifications");
+
+    const count =
+        document
+        .getElementById("notificationCount");
+
+
+    box.innerHTML = "";
+
+
+    if(!list.length){
+
+        box.innerHTML =
+        `
+        <div style="padding:30px;text-align:center;color:#888">
+            Nenhuma notificação
+        </div>
+        `;
+
+        count.style.display = "none";
+
+        return;
+
+    }
+
+
+    count.style.display = "flex";
+
+    count.textContent =
+        list.length;
+
+
+    list.forEach(function(n){
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "notification";
+
+        div.innerHTML =
+        `
+        <div class="notification-icon">
+            ${n.icon}
+        </div>
+
+        <div class="notification-text">
+
+            <b>${n.title}</b>
+
+            <span>${n.message}</span>
+
+        </div>
+        `;
+
+        box.appendChild(div);
+
+    });
+
+}
+
+
+function toggleNotifications(){
+
+    document
+    .getElementById("notificationPanel")
+    .classList.toggle("open");
+
+}
+
+
+function clearNotifications(){
+
+    localStorage.removeItem(
+        notificationKey(currentUser)
+    );
+
+    renderNotifications();
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+function showToast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
+
+    setTimeout(function(){
+
+        toast.classList.remove("show");
+
+    },2500);
+
+}
+
+
+/* INICIAR */
+
+renderNotifications();
+
+updateBank();
+
+</script>
+
+</body>
+</html>
